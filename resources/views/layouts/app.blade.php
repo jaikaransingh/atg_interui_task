@@ -11,6 +11,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -80,4 +81,76 @@
         </main>
     </div>
 </body>
+<script>
+    $(document).ready(function(){
+        $("#taskF").on('click', function(){
+            var user_id = $('#user_id').val();
+            var task = $('#taskN').val();
+            var status = $('#taskS').val();
+            
+            $.ajax({
+                url: "api/todo/add",
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content'),
+                    "API_KEY":"helloatg"
+                },
+                dataType: "json",
+                data: {
+                    "id":user_id,
+                    "t":task,
+                    "s":status
+                },
+                success: function(result) {
+                    sessionStorage.setItem("message", "new task created successfully");
+                    window.location.href = "{{ route('home')}}";
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            })
+        });
+
+        $("#taskU").on('click', function () {
+            var task_id = $("#taskid").val();
+            var status = $("#upds").val();
+
+            $.ajax({
+                url:"/api/todo/status",
+                type:"POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content'),
+                    "API_KEY":"helloatg"
+                },
+                dataType:"json",
+                data: {
+                    "task_id":task_id,
+                    "status":status
+                },
+                success: function(result) {
+                    sessionStorage.setItem("message", "task status updated successfully");
+                    window.location.href = "{{ route('home')}}";
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                }
+            })
+        });
+
+    });
+    
+    var data = sessionStorage.getItem('message');
+    if(data != undefined) {
+        $('#successMessage').html(data)
+    }
+    else{
+        $("#successMessage").hide();
+    }
+    $(document).ready(function() {
+        setTimeout(function() {
+            $("#successMessage").hide();
+            sessionStorage.removeItem('message');
+        }, 3000);
+    });
+</script>
 </html>

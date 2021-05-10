@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use Illuminate\Http\Support\Facdes\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Support\Facdes\Session;
+
 
 
 class TaskController extends Controller
@@ -43,6 +47,12 @@ class TaskController extends Controller
         else{
             return ["message"=>"Not Found"];
         }
+    }
+    function dashboard(){
+        $id = Auth::id();
+        $tasks = Task::Where('user_id',$id)->orderBy('id')->get();
+        
+        return view('home',compact('tasks'));
     }
     
 }
